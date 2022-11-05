@@ -18,7 +18,6 @@ def home():
     
     scores = []
     score_dict = {'username':str,'game1':str,'game2':str,'game3': str, 'game4':str}
-    player_ = ''
     with open(r'C:\Users\Grzegorz\Documents\Porg\hakaton\server\scores.txt' , encoding='iso8859-2') as f:
         lines = f.readlines()
         
@@ -26,39 +25,29 @@ def home():
         print(count)
         player_num = int(count/4)
         
+        data = list(lines)
         
         for i in range(player_num):
             scores.append(score_dict)
             
         i = 0
-       
-        for line in lines:
-            if player_ != line.split()[0]:
-                player_ =line.split()[0]
-                scores[i]['username'] = player_
-                #print(scores[i])
+        
+        player_ = ''
+        
+        for i in range(count):
+    
+            
+            if player_ != data[i].split()[0]:
+                player_ = data[i].split()[0]
+                
                 
             
-            
-            scores[i]['game' + str(i+1)] = line.split()[1]
-            #print(scores[i]['game' + str(i+1)])
-            
-            
-            
-            if i == 3 and scores[i]['username'] == player_:
-                
-                user = scores[i-1]['username']
-                g1 = scores[i-1]['game' + str(i-2)] 
-                g2 = scores[i-1]['game' + str(i-1)]
-                g3 = scores[i-1]['game' + str(i)] 
-                g4 = scores[i-1]['game' + str(i + 1)]
-                
-                print(user)
-                print(g1)
-                print(g2)
-                print(g3)
-                print(g4)
-                
+            if i == 0 or i%4 == 0:
+                user = player_
+                g1 = data[i].split()[1]
+                g2 = data[i+1].split()[1]
+                g3 = data[i+2].split()[1]
+                g4 = data[i+3].split()[1]
                 
                 user_exists = Score.query.filter_by(username=user).first() is not None
                 
@@ -80,8 +69,6 @@ def home():
                     
                     
                     db.session.commit()
-                
-                    
                 else:            
                     new_score = Score(username = user ,game1_score = g1, 
                                     game2_score = g2,  game3_score = g3,
@@ -90,20 +77,25 @@ def home():
                     print(new_score)
                     db.session.add(new_score)
                     db.session.commit()
-                    i = 0
                     
-            else:
-                i = i+1
-        f.close()
+    db_scores = Score.query.all()
+    scores_ = []
+    
+    for item in db_scores:
         
+        score = {
+            "username": item.username,
+            "game1": item.game1_score,
+            "game2": item.game2_score,
+            "game3": item.game3_score,
+            "game4": item.game4_score
+        }
         
-        
-            
-                
+        scores_.append(score)
 
-            
-            
-    return "XD"
+    print(scores_)
+    return jsonify(scores_)
+                 
         
     
     
