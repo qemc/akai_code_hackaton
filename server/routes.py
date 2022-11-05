@@ -13,7 +13,7 @@ class Score(db.Model):
     
 
     
-@app.route('/', methods = ['POST', 'GET'])
+@app.route('/score', methods = ['POST', 'GET'])
 def home():
     
     scores = []
@@ -84,6 +84,7 @@ def home():
     for item in db_scores:
         
         score = {
+            "id": item.id,
             "username": item.username,
             "game1": item.game1_score,
             "game2": item.game2_score,
